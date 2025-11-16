@@ -1,1 +1,91 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Mini Compiler</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/dracula.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Mini Compiler</a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <span class="nav-link text-white">Hello, {{ username }}</span>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container my-4">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="card p-4">
+                    <h3 class="text-center mb-3">Mini Compiler</h3>
+
+                    <form method="POST" id="compilerForm">
+                        <div class="mb-3 text-center">
+                            <label for="lang" class="form-label me-2"><b>Select Language:</b></label>
+                            <select name="lang" id="lang" class="form-select w-auto d-inline">
+                                <option value="java">Java</option>
+                                <option value="python">Python</option>
+                            </select>
+                        </div>
+
+                        <textarea id="code" name="code">{{ code if code else '' }}</textarea>
+
+                        <div class="text-center mt-3">
+                            <button type="submit" class="btn btn-primary">Run Code</button>
+                        </div>
+                    </form>
+
+                    <div class="mt-4">
+                        <h5>Output:</h5>
+                        <pre id="output" class="p-2 bg-dark text-light rounded">{{ output if output else '' }}</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CodeMirror JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/clike/clike.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/edit/closebrackets.min.js"></script>
+
+    <script>
+        // Initialize CodeMirror editor
+        const textarea = document.getElementById("code");
+        const editor = CodeMirror.fromTextArea(textarea, {
+            lineNumbers: true,
+            mode: "text/x-java",
+            theme: "dracula",
+            matchBrackets: true,
+            autoCloseBrackets: true,
+        });
+
+        // Ensure form submission sends the editor content
+        document.getElementById("compilerForm").addEventListener("submit", function() {
+            textarea.value = editor.getValue();
+        });
+
+        // Language change event
+        document.getElementById("lang").addEventListener("change", function() {
+            const lang = this.value;
+            editor.setOption("mode", lang === "java" ? "text/x-java" : "text/x-python");
+        });
+    </script>
+</body>
+</html>
